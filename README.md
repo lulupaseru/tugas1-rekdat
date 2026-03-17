@@ -1,6 +1,6 @@
 # Tugas 1 - Rekayasa Data (AMS232374-03)
 
-## 📌 Deskripsi Proyek
+## Deskripsi Tugas
 Repositori ini berisi penyelesaian **Tugas 1** untuk mata kuliah **AMS232374-03 - Rekayasa Data**. Tugas ini berfokus pada eksplorasi, manipulasi, dan analisis data akademik universitas menggunakan **Notasi Aljabar Relasional** dan **Perintah SQL**, beserta interpretasi analitik dari hasil/keluarannya.
 
 ---
@@ -49,4 +49,4 @@ Proyek ini menjawab 20 pertanyaan yang secara garis besar meliputi:
 
 ---
 
-Kumpulan perintah SQL dapat dilihat pada file [Query Jawaban SQL](Kode SQL Tugas 1.sql).
+Kumpulan perintah SQL dapat dilihat pada file [Query Jawaban SQL](Kode%20SQL%20Tugas%201.sql).
