@@ -34,8 +34,6 @@ WHERE NPM IS NULL
    
 -- 3
 
--- 4
-
 -- 5
 
 -- 6. avg, min, max, std
@@ -62,7 +60,10 @@ FROM krs;
    
 -- 7
 
--- 8
+-- 8. Mahasiswa dengan IPK diatas rata-rata
+SELECT *
+FROM mahasiswa
+WHERE IPK > (SELECT AVG(IPK) FROM mahasiswa);
 
 -- 9
 
@@ -73,7 +74,12 @@ GROUP BY NPM;
    
 -- 11
 
--- 12
+-- 12. Nama mahasiswa dengan mata kuliah dengan SKS tertinggi
+SELECT m.Nama
+FROM mahasiswa m
+JOIN krs k ON m.NPM = k.NPM
+JOIN mata_kuliah mk ON k.KodeMK = mk.KodeMK
+WHERE mk.SKS = (SELECT MAX(SKS) FROM mata_kuliah);
 
 -- 13
 
@@ -87,7 +93,23 @@ GROUP BY m.NPM, m.Nama
    
 -- 15
 
--- 16
+-- 16. Apakah mata kuliah dengan SKS lebih besar cenderung menghasilkan nilai lebih rendah?
+SELECT mk.SKS AS Banyak_SKS, COUNT(*) AS Jumlah_Mata_Kuliah,
+    AVG(
+        CASE 
+            WHEN k.Nilai = 'A' THEN 4.0
+            WHEN k.Nilai = 'A-' THEN 3.67
+            WHEN k.Nilai = 'B+' THEN 3.3
+            WHEN k.Nilai = 'B' THEN 3.0
+            WHEN k.Nilai = 'B-' THEN 2.67
+            WHEN k.Nilai = 'C+' THEN 2.3
+            WHEN k.Nilai = 'C' THEN 2.0
+            WHEN k.Nilai = 'D' THEN 1.0
+        END
+    ) AS Rata_Nilai
+FROM krs k
+JOIN mata_kuliah mk ON k.KodeMK = mk.KodeMK
+GROUP BY mk.SKS;
 
 -- 17
 
@@ -102,5 +124,8 @@ WHERE m.NPM = k.NPM
 
 -- 19
 
--- 20
-   
+-- 20. Apakah terdapat perbedaan rata-rata IPK antar angkatan?
+SELECT Angkatan, COUNT(*) AS Jumlah_Mahasiswa, AVG(IPK) AS Rata_IPK  
+FROM mahasiswa  
+GROUP BY Angkatan  
+ORDER BY Angkatan;
