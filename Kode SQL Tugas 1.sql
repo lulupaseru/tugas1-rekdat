@@ -32,7 +32,11 @@ WHERE NPM IS NULL
    OR Semester IS NULL 
    OR Nilai IS NULL;
    
--- 3
+-- 3. Baris duplikat
+SELECT NPM, KodeMK, Semester, Nilai, COUNT(*) AS Jumlah
+FROM krs
+GROUP BY NPM, KodeMK, Semester, Nilai
+HAVING COUNT(*) > 1;
 
 -- 5
 
@@ -58,7 +62,21 @@ SELECT
     STDDEV(Semester) AS std_semester
 FROM krs;
    
--- 7
+-- 7. Frekuensi prodi
+SELECT Prodi, COUNT(*) AS Frekuensi 
+FROM mahasiswa 
+GROUP BY Prodi 
+ORDER BY Frekuensi DESC;
+-- Frekuensi Angkatan
+SELECT Angkatan, COUNT(*) AS Frekuensi 
+FROM mahasiswa 
+GROUP BY Angkatan 
+ORDER BY Angkatan ASC;
+-- Frekuensi Nilai
+SELECT Nilai, COUNT(*) AS Frekuensi 
+FROM krs 
+GROUP BY Nilai 
+ORDER BY Frekuensi DESC;
 
 -- 8. Mahasiswa dengan IPK diatas rata-rata
 SELECT *
@@ -72,7 +90,15 @@ SELECT NPM, COUNT(KodeMK) AS banyak_matkul
 FROM krs
 GROUP BY NPM;
    
--- 11
+-- 11. Mata kuliah yang diambil oleh minimal 3 mahasiswa
+SELECT 
+    k.KodeMK, 
+    mk.NamaMK, 
+    COUNT(DISTINCT k.NPM) AS Jumlah_Mahasiswa 
+FROM krs k
+JOIN mata_kuliah mk ON k.KodeMK = mk.KodeMK
+GROUP BY k.KodeMK, mk.NamaMK
+HAVING COUNT(DISTINCT k.NPM) >= 3;
 
 -- 12. Nama mahasiswa dengan mata kuliah dengan SKS tertinggi
 SELECT m.Nama
@@ -91,7 +117,12 @@ WHERE m.NPM = k.NPM
 GROUP BY m.NPM, m.Nama
 	HAVING MIN(mk.SKS) = 3 AND MAX(mk.SKS) = 3;
    
--- 15
+-- 15. Korelasi IPK dan jumlah mata kuliah yang diambil
+SELECT m.NPM, m.Nama, m.IPK, COUNT(k.KodeMK) AS JumlahMK 
+FROM mahasiswa m 
+LEFT JOIN krs k ON m.NPM = k.NPM 
+GROUP BY m.NPM, m.Nama, m.IPK 
+ORDER BY m.IPK DESC;
 
 -- 16. Apakah mata kuliah dengan SKS lebih besar cenderung menghasilkan nilai lebih rendah?
 SELECT mk.SKS AS Banyak_SKS, COUNT(*) AS Jumlah_Mata_Kuliah,
@@ -122,7 +153,17 @@ FROM mahasiswa m, krs k, mata_kuliah mk
 WHERE m.NPM = k.NPM 
   AND k.KodeMK = mk.KodeMK;
 
--- 19
+-- 19. 
+SELECT 
+    CASE 
+        WHEN m.Prodi = mk.Prodi THEN 'Sama Prodi' 
+        ELSE 'Lintas Prodi' 
+    END AS KategoriPengambilan, 
+    COUNT(*) AS JumlahPengambilan 
+FROM krs k 
+JOIN mahasiswa m ON k.NPM = m.NPM 
+JOIN mata_kuliah mk ON k.KodeMK = mk.KodeMK 
+GROUP BY KategoriPengambilan;
 
 -- 20. Apakah terdapat perbedaan rata-rata IPK antar angkatan?
 SELECT Angkatan, COUNT(*) AS Jumlah_Mahasiswa, AVG(IPK) AS Rata_IPK  
